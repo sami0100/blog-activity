@@ -1,0 +1,30 @@
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: backend
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/blogdb
+      - PORT=4000
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  mongo-data:
